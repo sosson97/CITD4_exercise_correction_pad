@@ -7,4 +7,8 @@ State of the art pose estimation but requiring heavy computation. It's not suita
 
 ## Mobile Pose
 [Link](https://github.com/YuliangXiu/MobilePose-pytorch)  
-Much lighter pose estimation implemetation. It seems working with satisfactory performance in Rasberry Pi but need verification.  
+Much lighter pose estimation implemetation. It seems working with satisfactory performance in Rasberry Pi but need verification. 
+
+## Chainer Pose Proposal net
+[Link](https://github.com/Idein/chainer-pose-proposal-net)
+This repositroy demonstrates 10 FPS pose estimiation on Rasberry Pi 3. 

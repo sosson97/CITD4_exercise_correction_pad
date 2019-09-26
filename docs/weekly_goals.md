@@ -3,5 +3,5 @@
 ## 4: 09.24 - 10.01
 - [X] Order HWs
 - [ ] Install Rasberry Pi OS
-- [ ] Install pose estimiation implementation on Rasberry Pi
-- [ ] Run demo capturing human pose on Rasberry Pi
+- [ ] Install the pose estimiation implementation on Rasberry Pi
+- [ ] Run a demo capturing human pose on Rasberry Pi
