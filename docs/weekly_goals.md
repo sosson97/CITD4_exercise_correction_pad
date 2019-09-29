@@ -3,9 +3,7 @@
 ## 4: 09.24 - 10.01
 ### TO DO
 - [X] Order HWs
-- [ ] Install Rasberry Pi OS
-- [ ] Install the pose estimiation implementation on Rasberry Pi
-- [ ] Run a demo capturing human pose on Rasberry Pi
+- [X] Plan how to port pose estimation implementation to Raspberry Pi
 
 ### Reports
 - Inverstigating several demonstrations of computer vision project on Rasberry Pi, I found my project to be more challenging than I thought. It seems to require heavy optimization or networking implementation.
@@ -14,3 +12,12 @@
 - So, here I suggest two solutions for this issue. 
     - Modify existing implementations to use Video Core in Rasberry Pi. This is a kind of code optimization job, which soudns fun. But it requires studying Video Core python API and I might have to implement wrapper functions for PyTorch. That's a quite tough job.
     - Use networking. The pipeline is as follows. First, Rasberry Pi captures a video and send it to server computer which is a high performance GPU-available PC using networking. Second, server computer make inference in real time. Third, send the numerical information of 2D joint position back to Rasberry Pi using network. Fourth, Rasberry Pi draws 2D joint position on the video in real time and give an user a feedback based on 2D joint position.
+- How to install PyTorch on Raspberry Pi?([Link](https://gist.github.com/fgolemo/b973a3fa1aaa67ac61c480ae8440e754)  
+
+## 5: 10.01 - 10.08
+### TO DO
+- [ ] Install Rasberry Pi OS
+- [ ] Install the pose estimiation implementation on Rasberry Pi
+- [ ] Run a demo capturing human pose on Rasberry Pi
+
+
