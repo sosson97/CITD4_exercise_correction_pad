@@ -16,8 +16,6 @@
 
 ## 5: 10.01 - 10.08
 ### TO DO
-- [ ] Install Rasberry Pi OS
-- [ ] Install the pose estimiation implementation on Rasberry Pi
-- [ ] Run a demo capturing human pose on Rasberry Pi
-
-
+- [ ] Order additional HWs
+- [ ] Collect and classfy different push-up positions
+- [ ] Analyze the position of joints during different push-up position in executing pose estimation
