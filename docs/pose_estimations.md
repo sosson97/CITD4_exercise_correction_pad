@@ -18,3 +18,9 @@ MobilePose-Pi, a repository implementing MobilePose for RaspberryPi. It includes
 Chainer version. This repositroy demonstrates 10 FPS pose estimiation on Rasberry Pi 3. 
 [Link](https://github.com/wangziren1/pytorch_pose_proposal_networks)
 Pytorch version. I used this version for current demo.
+
+## 3Dpose ssl
+[Link](https://github.com/chanyn/3Dpose_ssl)
+
+## VideoPose3D
+[Link](https://github.com/facebookresearch/VideoPose3D/blob/master/INFERENCE.md)
