@@ -16,6 +16,12 @@
 
 ## 5: 10.01 - 10.08
 ### TO DO
+- [X] Order additional HWs
+- [X] Collect and classfy different push-up positions
+- [X] Analyze the position of joints during different push-up position in executing pose estimation
+
+## 6: 10.08 - 10.15
+### TO DO
 - [ ] Order additional HWs
 - [ ] Collect and classfy different push-up positions
 - [ ] Analyze the position of joints during different push-up position in executing pose estimation
