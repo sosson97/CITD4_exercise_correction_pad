@@ -22,6 +22,6 @@
 
 ## 6: 10.08 - 10.15
 ### TO DO
-- [ ] Order additional HWs
-- [ ] Collect and classfy different push-up positions
-- [ ] Analyze the position of joints during different push-up position in executing pose estimation
+- [ ] Run push-up demo on Jetson Nano for intermediate presentation preparation
+- [ ] Make a simple feedback for elbow flare
+- [ ] Install webcam on Jetson Nano
