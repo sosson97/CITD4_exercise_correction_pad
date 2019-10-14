@@ -22,6 +22,12 @@
 
 ## 6: 10.08 - 10.15
 ### TO DO
-- [ ] Run push-up demo on Jetson Nano for intermediate presentation preparation
-- [ ] Make a simple feedback for elbow flare
-- [ ] Install webcam on Jetson Nano
+- [X] Run push-up demo on Jetson Nano for intermediate presentation preparation
+- [X] Make a simple feedback for elbow flare
+- [X] Install webcam on Jetson Nano
+
+## 7: 10.15 - 10.22
+### TO DO
+- [ ] 
+- [ ]
+- [ ]
