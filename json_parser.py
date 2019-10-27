@@ -33,12 +33,24 @@ class FrameInfo():
         if i >= len(self.label):
             return -1
         return self.label[i]
+    def check_confidence(self, point_num_list, threshold):
+        for point_num in point_num_list:
+            confidence = self.get_confidence_level(point_num)
+            if confidence == -1:
+                sys.exit("Error: wrong point_num")
+            if confidence < threshold:
+                return False
+        return True
+
 
 class VideoInfo():
-    def __init__(self, view, label)
+    def __init__(self, name, view, label):
+        self.name = name
         self.view = view
         self.label = label
         self.frames = []
+    def get_name(self):
+        return self.name
     def get_frame_len(self):
         return len(self.frames)
     def get_frame(self, i):
@@ -74,8 +86,12 @@ class JsonParser():
         if (limit_frame_no > 999):
             sys.exit("JsonParser doesn't support limit_frame_no larger than 999") 
     
-    
-        video = VideoInfo(view, label)
+        video_name = None
+        if source is None:
+            video_name = "webcam"
+        else:
+            video_name = source
+        video = VideoInfo(video_name, view, label)
         for i in range(limit_frame_no):
             filename = None
             str_i = str(i)
