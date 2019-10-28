@@ -97,7 +97,7 @@ class JsonParser():
             # determine filename
             if (i < 10):
                 if (source is None):
-                    filename = "00000000000" + str_i
+                    filename = "00000000000" + str_i + "_keypoints.json"
                 else:
                     filename = source + "_00000000000" + str_i + "_keypoints.json"
             elif (i < 100):
