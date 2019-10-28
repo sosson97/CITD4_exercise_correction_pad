@@ -22,7 +22,7 @@ class FrameInfo():
     def get_frame_no(self):
         return self.frame_no
     def get_confidence_level(self, i):
-        if i >= len(self.confidence_level):
+        if i >= len(self.confidence_levels):
             return -1
         return self.confidence_levels[i]
     def get_point_location(self, i):
@@ -58,11 +58,6 @@ class VideoInfo():
             return -1
         return self.frames[i]
     def append_frame(self, fi):
-        last_frame_no = self.get_frame(self.get_frame_len()-1).get_frame_no()
-        new_frame_no = fi.get_frame_no()
-        if last_frame_no >= new_frame_no:
-            print("Error: wrong frame number appended")
-            return
         self.frames.append(fi)
     
 
@@ -95,24 +90,23 @@ class JsonParser():
         for i in range(limit_frame_no):
             filename = None
             str_i = str(i)
-            
             # determine filename
             if (i < 10):
                 if (source is None):
-                    filename = "000000000000" + str_i
-                else:
-                    filename = source + "_000000000000" + str_i + "_keypoints.json"
-            if (i < 100):
-                if (source is None):
-                    filename = "00000000000" + str_i + "_keypoints.json"
+                    filename = "00000000000" + str_i
                 else:
                     filename = source + "_00000000000" + str_i + "_keypoints.json"
-            else:
+            elif (i < 100):
                 if (source is None):
                     filename = "0000000000" + str_i + "_keypoints.json"
                 else:
                     filename = source + "_0000000000" + str_i + "_keypoints.json"
-            
+            else:
+                if (source is None):
+                    filename = "000000000" + str_i + "_keypoints.json"
+                else:
+                    filename = source + "_000000000" + str_i + "_keypoints.json"
+             
             # set file path and check it exists
             filepath = Path(os.path.join(directory, filename))
             # blocking until this file generated
