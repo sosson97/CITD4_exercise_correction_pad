@@ -40,7 +40,12 @@ class VideoProcessor():
             writer = csv.writer(f, delimiter=',')
             for line in self.result:
                 writer.writerow(line)
+    def get_video_view():
+        return self.video.get_view()
 
+    def get_video_label():
+        return self.video.get_label() 
+    
 
     # processing function
     def compute_left_elbow_angle(self, confidence_threshold=0.8):

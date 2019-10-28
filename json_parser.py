@@ -51,6 +51,10 @@ class VideoInfo():
         self.frames = []
     def get_name(self):
         return self.name
+    def get_view(self):
+        return self.view
+    def get_label(self):
+        return self.label
     def get_frame_len(self):
         return len(self.frames)
     def get_frame(self, i):

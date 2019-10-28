@@ -3,9 +3,36 @@
 1. This file contains FeedbackSystem class which has several feedback functions
 """
 
+from pathlib import Path
+from video_processor import VideoProcessor
+from sklearn.cluster import KMeans
+import numpy as np
+import pickle
 
 class FeedbackSystem():
-    def min_max(self, mat):
+    def __init__(self):
+        self.front_data = []
+        self.right_data = []
+
+    def save(self, filename, view):
+        with open(filename, "wb") as f:
+            if view == "front":
+                pickle.dump(self.front_data, f)
+            elif view == "right":
+                pickle.dump(self.right_data, f)
+            else:
+                sys.exit("Error: Wrong view type is given")
+    def load(self, filename, view):
+        with open(filename, "rb") as f:
+            if view == "front":
+                self.front_data = pickle.load(f)
+            elif view == "right":
+                self.right_data = pickle.load(f)
+            else:
+                sys.exit("Error: Wrong view type is given")
+
+
+    def min_max(self, mat, view):
         """
         Description: Find 3 local minimum and maximum from angle graph then return their average repectively as a tuple
         """
@@ -21,6 +48,17 @@ class FeedbackSystem():
             if cur_angle == 0:
                 continue
             
+            # threshold
+            if view == "front":
+                min_threshold = 80
+                max_threshold = 120
+            elif view == "right":
+                min_threshold = 120
+                max_threshold = 120
+            else:
+                sys.exit("Error: Wrong view type is given")
+
+
             
             is_local_minima = (cur_angle < mat[i-1][1] or mat[i-1][1] == 0) and \
             (cur_angle < mat[i-2][1] or mat[i-2][1] == 0) and \
@@ -28,7 +66,7 @@ class FeedbackSystem():
             (cur_angle < mat[i+1][1] or mat[i+1][1] == 0) and \
             (cur_angle < mat[i+2][1] or mat[i+2][1] == 0) and \
             (cur_angle < mat[i+3][1] or mat[i+3][1] == 0) and \
-            cur_angle < 100 
+            cur_angle < min_threshold 
 
             if is_local_minima:
                 mins.append(cur_angle)
@@ -39,7 +77,7 @@ class FeedbackSystem():
             (cur_angle > mat[i+1][1]) and \
             (cur_angle > mat[i+2][1]) and \
             (cur_angle > mat[i+3][1]) and \
-            cur_angle > 120
+            cur_angle > max_threshold
             
             if is_local_maxima:
                 maxs.append(cur_angle)
@@ -52,6 +90,45 @@ class FeedbackSystem():
         print(maxs)
         return (sum(mins)/len(mins), sum(maxs)/len(maxs))
 
-    def min_max_k_means():
-        return
+    def learn(self, video, threshold=0.8):
+        vp = VideoProcessor(video)
+        if vp.get_video_view() == "front":
+            angle_result = vp.compute_left_elbow_angle(threshold)
+            min_max = self.min_max(angle_result, "front")
+            self.front_data.append(((min_max), vp.get_video_label()))
+        elif vp.get_video_view() == "right":
+            angle_result = vp.compute_left_shoulder_angle(threshold)
+            min_max = self.min_max(angle_result, "right")
+            self.right_data.append(((min_max), vp.get_video_label()))
+        else:
+            sys.exit("Error: Wrong view type is given")
+        print(video.get_name() + " has been successfully learned.")
+    def feedback_kmeans(self, video, threshold=0.8):
+        # input video may have None label
+        vp = VideoProcessor(video)
+        if vp.get_video_view() == "front":
+            angle_result = vp.compute_left_elbow_angle(threshold)
+            min_max = self.min_max(angle_result, "front")
+            training_data = [t[0] for t in self.front_data] 
+            
+            # expect two clusters; one for full reps, another one for partial reps
+            km = KMeans(num_clusters=2, random_state=0).fit(np.array(training_data))
+            
+            cluster = km.predict(np.array(min_max))
+            # majority voting
+            labels = km.labels_
+            training_labels = [t[1] for t in self.front_data] 
+            positive_labels_num = 0
+            negative_labels_num = 0
+            for i in range(len(labels)):
+                if labels[i] == cluster:
+                    if training_labels[i] == 1:
+                        positive_labels_num = positive_labels_num + 1
+                    else:
+                        negative_labels_num = negative_labels_num + 1
+            result = (positive_labels_num > negative_labels_num)
 
+            if result:
+                print("You're conduction push-up with partial-range. Go all the way up and down!")
+            else: 
+                print("You're conducting push-up with full-range. Great!")
