@@ -40,10 +40,10 @@ class VideoProcessor():
             writer = csv.writer(f, delimiter=',')
             for line in self.result:
                 writer.writerow(line)
-    def get_video_view():
+    def get_video_view(self):
         return self.video.get_view()
 
-    def get_video_label():
+    def get_video_label(self):
         return self.video.get_label() 
     
 
