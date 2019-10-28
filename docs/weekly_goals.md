@@ -29,6 +29,6 @@
 ## 7: 10.15 - 10.22
 ### TO DO
 We have the intermediate presentation next week!
-- [ ] Integrate OpenPose webcam mode with analysis program
-- [ ] Collect push-up data
-- [ ] Try clustering to distinguish elbow flare from normal push-up
+- [X] Integrate OpenPose webcam mode with analysis program
+- [X] Collect push-up data
+- [X] Try clustering to distinguish elbow flare from normal push-up
