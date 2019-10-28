@@ -28,7 +28,7 @@ class FeedbackSystem():
             (cur_angle < mat[i+1][1] or mat[i+1][1] == 0) and \
             (cur_angle < mat[i+2][1] or mat[i+2][1] == 0) and \
             (cur_angle < mat[i+3][1] or mat[i+3][1] == 0) and \
-            cur_angle < 50
+            cur_angle < 100 
 
             if is_local_minima:
                 mins.append(cur_angle)
