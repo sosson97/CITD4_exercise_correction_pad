@@ -16,7 +16,7 @@ fds = FeedbackSystem()
 fds.load("demo_front_model", "front")
 
 # 2. Run Openpose Webcam Mode
-subprocess.Popen([openpose_demo_path, "--camera=" + camera_offset, "--net_resolution=128x128", "-write_json=" + json_dir], shell=False)
+subprocess.Popen([openpose_demo_path, "--camera=" + str(camera_offset), "--net_resolution=128x128", "-write_json=" + json_dir], shell=False)
 
 # 3. Give feedback
 j = JsonParser()
