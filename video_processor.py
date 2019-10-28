@@ -81,7 +81,12 @@ class VideoProcessor():
             vector_76_norm = np.linalg.norm(vector_76)
             
             if (vector_56_norm > 0) and (vector_76_norm > 0):
-                left_angle = math.acos(vector_56_dot_vector_76 / (vector_56_norm * vector_76_norm)) * 180 / math.pi
+                x = vector_56_dot_vector_76 / (vector_56_norm * vector_76_norm)
+                if x > 1:
+                    x = 1
+                if x < -1:
+                    x = -1
+                left_angle = math.acos(x) * 180 / math.pi
             else:
                 left_angle = 0 
             
@@ -116,7 +121,12 @@ class VideoProcessor():
             vector_65_norm = np.linalg.norm(vector_65)
             
             if (vector_15_norm > 0) and (vector_65_norm > 0):
-                left_angle = math.acos(vector_15_dot_vector_65 / (vector_15_norm * vector_65_norm)) * 180 / math.pi
+                x = vector_15_dot_vector_65 / (vector_15_norm * vector_65_norm)
+                if x > 1:
+                    x = 1
+                if x < -1:
+                    x = -1
+                left_angle = math.acos(x) * 180 / math.pi
             else:
                 left_angle = 0 
             

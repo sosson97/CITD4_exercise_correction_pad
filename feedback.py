@@ -112,9 +112,9 @@ class FeedbackSystem():
             training_data = [t[0] for t in self.front_data] 
             
             # expect two clusters; one for full reps, another one for partial reps
-            km = KMeans(num_clusters=2, random_state=0).fit(np.array(training_data))
+            km = KMeans(n_clusters=2, random_state=0).fit(np.array(training_data))
             
-            cluster = km.predict(np.array(min_max))
+            cluster = km.predict(np.array([np.array(min_max)]))
             # majority voting
             labels = km.labels_
             training_labels = [t[1] for t in self.front_data] 
