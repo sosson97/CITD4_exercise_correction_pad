@@ -32,3 +32,12 @@ We have the intermediate presentation next week!
 - [X] Integrate OpenPose webcam mode with analysis program
 - [X] Collect push-up data
 - [X] Try clustering to distinguish elbow flare from normal push-up
+
+## 9: 10.29 - 11.05
+### TO DO
+- [ ] Improve the precision of min-max feedback system 
+- [ ] Design and order hardware frame
+- [ ] Devise an algorithm for detecting elbow flare
+
+
+
