@@ -41,9 +41,9 @@ We have the intermediate presentation next week!
 
 ## 10: 11.05 - 11.12
 ### TO DO
-- [ ] Improve the precision of min-max feedback system 
-- [ ] Design and order hardware frame
-- [ ] Devise an algorithm for detecting elbow flare
+- [ ] Improve the precision of min-max feedback system(Cont.) 
+- [ ] Make HW frame using 3D printer
+- [ ] Add more detection algorithms by resolving addressed issues
 
 
 
