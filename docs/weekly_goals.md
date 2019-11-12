@@ -41,10 +41,15 @@ We have the intermediate presentation next week!
 
 ## 10: 11.05 - 11.12
 ### TO DO
-- [ ] Improve the precision of min-max feedback system(Cont.) 
-- [ ] Make HW frame using 3D printer
-- [ ] Add more detection algorithms by resolving addressed issues
+- [X] Improve the precision of min-max feedback system(Cont.) 
+- [X] Make HW frame using 3D printer
+- [X] Add more detection algorithms by resolving addressed issues
 
+## 11: 11.12 - 11.19
+### TO DO
+- [ ] Integrate HW parts
+- [ ] Design and Implement GUI
+- [ ] Improve feedback system(Cont.) 
 
 
 
