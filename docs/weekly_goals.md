@@ -48,8 +48,12 @@ We have the intermediate presentation next week!
 ## 11: 11.12 - 11.19
 ### TO DO
 - [ ] Integrate HW parts
-- [ ] Design and Implement GUI
+- [X] Design and Implement GUI
+- [X] Improve feedback system(Cont.) 
+
+## 12: 11.19 - 11.26
+### TO DO
+- [ ] Integrate HW parts(Cont.)
+- [ ] Complete GUI Application
 - [ ] Improve feedback system(Cont.) 
-
-
 
