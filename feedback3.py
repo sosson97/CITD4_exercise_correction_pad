@@ -147,23 +147,23 @@ class FeedbackSystem():
             return 0
         return [sum(mins)/len(mins), sum(maxs)/len(maxs)]
 
-    def learn(self, video, ty, threshold=0.8):
+    def learn(self, video, threshold=0.8):
         vp = VideoProcessor(video)
         if vp.get_video_view() == "front": # you need 5-dimensional data in front case
-            if ty is "elbow":
-                angle_result = vp.compute_left_elbow_angle(threshold)
-            if ty is "shoulder":
-                angle_result = vp.compute_left_shoulder_angle(threshold)
-            if ty is "arm":
-                angle_result = vp.compute_left_arm_angle_with_floor(threshold)
+            elbow_angle_result = vp.compute_left_elbow_angle(threshold)
+            shoulder_angle_result = vp.compute_left_shoulder_angle(threshold)
+            arm_angle_result = vp.compute_left_arm_angle_with_floor(threshold)
 
-            min_max = self.min_max(angle_result, "front", ty)
+            min_max_1 = self.min_max(elbow_angle_result, "front", "elbow")
+            min_max_2 = self.min_max(shoulder_angle_result , "front", "shoulder")
+            min_max_3 = self.min_max(arm_angle_result, "front", "arm")
             
             if (self.div_zero is 1):
                     print("training data is erronous, div-zero happend. This data is not added")
                     self.div_zero = 0
                     return
-           
+            #only min is used for shoulder angle
+            min_max = min_max_1 + [min_max_2[0]] + min_max_3
             self.front_data.append(((min_max), vp.get_video_label()))
         elif vp.get_video_view() == "left":
             angle_result = vp.compute_left_elbow_angle(threshold)
@@ -176,21 +176,22 @@ class FeedbackSystem():
         else:
             sys.exit("Error: Wrong view type is given")
         print(video.get_name() + " has been successfully learned.")
-    def feedback_kmeans(self, video, ty, threshold=0.8):
+    def feedback_kmeans(self, video, threshold=0.8):
         # input video may have None label
         vp = VideoProcessor(video)
-        if vp.get_video_view() == "front": # you need 6-dimensional data in front caseW
-            if ty is "elbow":
-                angle_result = vp.compute_left_elbow_angle(threshold)
-            if ty is "shoulder":
-                angle_result = vp.compute_left_shoulder_angle(threshold)
-            if ty is "arm":
-                angle_result = vp.compute_left_arm_angle_with_floor(threshold)
+        if vp.get_video_view() == "front": # you need 6-dimensional data in front case
+            elbow_angle_result = vp.compute_left_elbow_angle(threshold)
+            shoulder_angle_result = vp.compute_left_shoulder_angle(threshold)
+            arm_angle_result = vp.compute_left_arm_angle_with_floor(threshold)
 
-            min_max = self.min_max(angle_result, "front", ty)
+            min_max_1 = self.min_max(elbow_angle_result, "front", "elbow")
+            min_max_2 = self.min_max(shoulder_angle_result , "front", "shoulder")
+            min_max_3 = self.min_max(arm_angle_result, "front", "arm")
             
             if (self.div_zero is 1):
                     sys.exit("training data is erronous, div-zero happend")
+
+            min_max = min_max_1 + [min_max_2[0]] + min_max_3
 
             training_data = [t[0] for t in self.front_data] 
             
@@ -203,21 +204,19 @@ class FeedbackSystem():
             # majority voting
             labels = km.labels_
             training_labels = [t[1] for t in self.front_data] 
-            positive_labels_num = 0
-            negative_labels_num = 0
-
-            if ty is "elbow":
-                label_index = 0
-            if ty is "shoulder":
-                label_index = 2
-            if ty is "arm":
-                label_index = 1
+            positive_labels_num = [0, 0, 0]
+            negative_labels_num = [0, 0, 0]
             for i in range(len(labels)):
                 if labels[i] == cluster:
-                    if training_labels[i][label_index] == 1:
-                        positive_labels_num = positive_labels_num + 1
-                    else:
-                        negative_labels_num = negative_labels_num + 1
-            result = positive_labels_num > negative_labels_num
+                    print(str(i))
+                    print(training_labels[i])
+                    for j in range(len(positive_labels_num)):
+                        if training_labels[i][j] == 1:
+                            positive_labels_num[j] = positive_labels_num[j] + 1
+                        else:
+                            negative_labels_num[j] = negative_labels_num[j] + 1
+            result = []
+            for i in range(len(positive_labels_num)):
+                result.append(positive_labels_num[i] > negative_labels_num[i])
 
             return result

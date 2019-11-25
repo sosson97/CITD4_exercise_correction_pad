@@ -46,8 +46,8 @@ class FrameInfo():
 class VideoInfo():
     def __init__(self, name, view, label):
         self.name = name
-        self.view = view
-        self.label = label
+        self.view = view #view format "front", "left"
+        self.label = label #label format [partial range or not, elbow flare or not, wide or not]
         self.frames = []
     def get_name(self):
         return self.name
