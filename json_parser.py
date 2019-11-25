@@ -68,6 +68,8 @@ class VideoInfo():
 
 
 class JsonParser():
+    def __init__(self):
+        self.video = None
     def parse(self, source, limit_frame_no, directory, view, label):
         """
         Description:
@@ -147,5 +149,7 @@ class JsonParser():
             video.append_frame(fi)
             
             # iteration done
+        self.video = video
         return video
+
             

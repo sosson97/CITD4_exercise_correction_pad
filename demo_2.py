@@ -16,7 +16,6 @@ model_dir = "D:\\OneDrive\\OneDrive - postech.ac.kr\\2019 Fall\\창의설계4\\o
 
 fds = FeedbackSystem()
 fds.load("demo_front_model", "front")
-
 for f in os.listdir(json_dir):
 	os.remove(os.path.join(json_dir, f))
 
@@ -28,7 +27,7 @@ handler = subprocess.Popen([openpose_demo_path, "--disable_blending=true","--cam
 #try: 
 j = JsonParser()
 print("Start 3 push-up")
-video = j.parse(None, 30 , json_dir, "front", None)
+video = j.parse(None, 20 , json_dir, "front", None)
 fds.feedback_kmeans(video)
 handler.terminate()
 #except:
