@@ -29,6 +29,31 @@
 ## 7: 10.15 - 10.22
 ### TO DO
 We have the intermediate presentation next week!
-- [ ] Integrate OpenPose webcam mode with analysis program
-- [ ] Collect push-up data
-- [ ] Try clustering to distinguish elbow flare from normal push-up
+- [X] Integrate OpenPose webcam mode with analysis program
+- [X] Collect push-up data
+- [X] Try clustering to distinguish elbow flare from normal push-up
+
+## 9: 10.29 - 11.05
+### TO DO
+- [ ] Improve the precision of min-max feedback system 
+- [X] Design and order hardware frame
+- [X] Devise an algorithm for detecting elbow flare
+
+## 10: 11.05 - 11.12
+### TO DO
+- [X] Improve the precision of min-max feedback system(Cont.) 
+- [X] Make HW frame using 3D printer
+- [X] Add more detection algorithms by resolving addressed issues
+
+## 11: 11.12 - 11.19
+### TO DO
+- [ ] Integrate HW parts
+- [X] Design and Implement GUI
+- [X] Improve feedback system(Cont.) 
+
+## 12: 11.19 - 11.26
+### TO DO
+- [ ] Integrate HW parts(Cont.)
+- [ ] Complete GUI Application
+- [ ] Improve feedback system(Cont.) 
+

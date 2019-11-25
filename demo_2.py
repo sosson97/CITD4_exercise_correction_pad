@@ -9,10 +9,10 @@ from pathlib import Path
 import subprocess
 import os, re
 
-openpose_demo_path = "D:\\OneDrive\\OneDrive - postech.ac.kr\\2019 Fall\\창의설계4\\openpose-1.5.1-binaries-win64-only_cpu-python-flir-3d\\openpose-1.5.1-binaries-win64-only_cpu-python-flir-3d\\openpose\\bin\\OpenPoseDemo.exe"
-camera_offset = 1
-json_dir = "D:\\OneDrive\\OneDrive - postech.ac.kr\\2019 Fall\\창의설계4\\code\\json\\output"
-model_dir = "D:\\OneDrive\\OneDrive - postech.ac.kr\\2019 Fall\\창의설계4\\openpose-1.5.1-binaries-win64-only_cpu-python-flir-3d\\openpose-1.5.1-binaries-win64-only_cpu-python-flir-3d\\openpose\\models"
+openpose_demo_path = "../openpose/build/examples/openpose/openpose.bin"
+camera_offset = 0
+json_dir = "../json/output"
+model_dir = "../openpose/models"
 
 fds = FeedbackSystem()
 fds.load("demo_front_model", "front")
