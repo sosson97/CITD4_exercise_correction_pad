@@ -11,27 +11,24 @@ import os, re
 
 openpose_demo_path = "D:\\OneDrive\\OneDrive - postech.ac.kr\\2019 Fall\\창의설계4\\openpose-1.5.1-binaries-win64-only_cpu-python-flir-3d\\openpose-1.5.1-binaries-win64-only_cpu-python-flir-3d\\openpose\\bin\\OpenPoseDemo.exe"
 camera_offset = 1
-json_dir = "D:\\OneDrive\\OneDrive - postech.ac.kr\\2019 Fall\\창의설계4\\code\\json\\output"
+video_name = "flare1"
+json_dir = "D:\\OneDrive\\OneDrive - postech.ac.kr\\2019 Fall\\창의설계4\\code\\json\\" + video_name
 model_dir = "D:\\OneDrive\\OneDrive - postech.ac.kr\\2019 Fall\\창의설계4\\openpose-1.5.1-binaries-win64-only_cpu-python-flir-3d\\openpose-1.5.1-binaries-win64-only_cpu-python-flir-3d\\openpose\\models"
 
-fds = FeedbackSystem()
-fds.load("demo_front_model", "front")
-for f in os.listdir(json_dir):
-	os.remove(os.path.join(json_dir, f))
-
-# 2. Run Openpose Webcam Mode
-handler = subprocess.Popen([openpose_demo_path, "--disable_blending=true","--camera=" + str(camera_offset), "--net_resolution=128x128", "--write_json=" + json_dir, "--model_folder=" + model_dir, "--number_people_max=1"], shell=False)
 
 
-# 3. Give feedback
-try: 
+
+tys = ["elbow", "arm", "shoulder"]
+for ty in tys:
+	fds = FeedbackSystem()
+	fds.load("demo_front_" + ty + "_model", "front")
+
+	# 2. Run Openpose Webcam Mode
+
+
+	# 3. Give feedback
 	j = JsonParser()
-	print("Start 3 push-up")
-	video = j.parse(None, 20 , json_dir, "front", None)
-	result = fds.feedback_kmeans(video)
+	count = len(os.listdir(json_dir)) 
+	video = j.parse(video_name,  count, json_dir, "front", None)
+	result = fds.feedback_kmeans(video, ty)
 	print(result)
-	handler.terminate()
-except:
-	print("Exception Occured")
-	handler.terminate()
-

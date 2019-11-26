@@ -36,7 +36,7 @@ class VideoProcessor():
                 path = dir_path.joinpath(filename)
             else:
                 path = cur_path.joinpath(dir_path).joinpath(filename) 
-        with open(path, "wb") as f:
+        with open(path, "w") as f:
             writer = csv.writer(f, delimiter=',')
             for line in self.result:
                 writer.writerow(line)
@@ -133,5 +133,93 @@ class VideoProcessor():
             self.result.append((frame.get_frame_no(), left_angle))
 
         self.last_operation = "left_shoulder_angle"
+        return self.result
+    def compute_left_knee_angle(self, confidence_threshold=0.8):
+        self.clear_result() 
+
+        # for each frame
+        for i in range(self.video.get_frame_len()):
+            frame = self.video.get_frame(i)
+            point_num_list = [12,13,14]
+            
+            if not frame.check_confidence(point_num_list, confidence_threshold):
+                # pass this frame
+                continue
+            
+           
+            point_12 = np.array(frame.get_point_location(12))
+            point_13 = np.array(frame.get_point_location(13))
+            point_14 = np.array(frame.get_point_location(14))
+
+            diff_x1213 = abs(point_12[0]-point_13[0])
+            diff_x1413 = abs(point_14[0]-point_13[0])
+
+            vector_1213 = np.array(point_12 - point_13)
+            vector_1413 = np.array(point_14 - point_13)
+            
+            vector_1213_dot_vector_1413 = vector_1213[0]*vector_1413[0] + vector_1213[1]*vector_1413[1]
+            vector_1213_norm = np.linalg.norm(vector_1213)
+            vector_1413_norm = np.linalg.norm(vector_1413)
+            
+            if (vector_1213_norm > 0) and (vector_1413_norm > 0):
+                x = vector_1213_dot_vector_1413 / (vector_1213_norm * vector_1413_norm)
+                if x > 1:
+                    x = 1
+                if x < -1:
+                    x = -1
+                left_angle = math.acos(x) * 180 / math.pi
+            else:
+                left_angle = 0 
+            
+            self.result.append((frame.get_frame_no(), left_angle))
+
+        
+        self.last_operation = "left_knee_angle"
+        return self.result
+    def compute_left_arm_angle_with_floor(self, confidence_threshold=0.8):
+        self.clear_result() 
+        
+        # for each frame
+        fixed_7 = None
+        for i in range(self.video.get_frame_len()):
+            frame = self.video.get_frame(i)
+            point_num_list = [6]
+            
+            if not frame.check_confidence(point_num_list, confidence_threshold):
+                # pass this frame
+                continue
+            
+            if fixed_7 is None:
+                point_num_list = [7]
+                if not frame.check_confidence(point_num_list, confidence_threshold):
+                    # pass this frame
+                    continue
+                else:
+                    fixed_7 = frame.get_point_location(7)
+            
+            point_6 = np.array(frame.get_point_location(6))
+            point_7 = fixed_7
+            point_5 = np.array([0, point_6[1]])#this is imageinary point! not real point 5            
+            
+            vector_56 = np.array(point_5 - point_6)
+            vector_76 = np.array(point_7 - point_6)
+            
+            vector_56_dot_vector_76 = vector_56[0]*vector_76[0] + vector_56[1]*vector_76[1]
+            vector_56_norm = np.linalg.norm(vector_56)
+            vector_76_norm = np.linalg.norm(vector_76)
+            
+            if (vector_56_norm > 0) and (vector_76_norm > 0):
+                x = vector_56_dot_vector_76 / (vector_56_norm * vector_76_norm)
+                if x > 1:
+                    x = 1
+                if x < -1:
+                    x = -1
+                left_angle = math.acos(x) * 180 / math.pi
+            else:
+                left_angle = 0 
+            
+            self.result.append((frame.get_frame_no(), left_angle))
+
+        self.last_operation = "left_arm_angle"
         return self.result
 

@@ -46,8 +46,8 @@ class FrameInfo():
 class VideoInfo():
     def __init__(self, name, view, label):
         self.name = name
-        self.view = view
-        self.label = label
+        self.view = view #view format "front", "left"
+        self.label = label #label format [partial range or not, elbow flare or not, wide or not]
         self.frames = []
     def get_name(self):
         return self.name
@@ -68,6 +68,8 @@ class VideoInfo():
 
 
 class JsonParser():
+    def __init__(self):
+        self.video = None
     def parse(self, source, limit_frame_no, directory, view, label):
         """
         Description:
@@ -147,5 +149,7 @@ class JsonParser():
             video.append_frame(fi)
             
             # iteration done
+        self.video = video
         return video
+
             
