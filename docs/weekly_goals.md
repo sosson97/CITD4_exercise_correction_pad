@@ -55,5 +55,11 @@ We have the intermediate presentation next week!
 ### TO DO
 - [ ] Integrate HW parts(Cont.)
 - [ ] Complete GUI Application
-- [ ] Improve feedback system(Cont.) 
+- [X] Improve feedback system(Cont.) 
+
+## 13: 11.26 - 12.03
+### TO DO
+- [ ] Integrate HW parts(Cont.)
+- [ ] Complete GUI Application(Cont.)
+- [ ] Design Demo Poster
 
