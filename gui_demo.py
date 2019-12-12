@@ -32,22 +32,59 @@ Qt GUI Part
 
 from PyQt5.QtWidgets import QApplication, QPushButton, QHBoxLayout\
 		, QVBoxLayout, QWidget, QLabel, QStackedWidget, QSizePolicy
-from PyQt5.QtGui import QFont, QWindow
+from PyQt5.QtGui import QFont, QWindow, QPixmap
 from PyQt5.QtCore import QSize, Qt
 from subprocess import Popen
 from functools import partial
 
-DISPLAY_WIDTH = 1024
-DISPLAY_HEIGHT = 800
+DISPLAY_WIDTH = 1280
+DISPLAY_HEIGHT = 720
 
-     
+
+class FeedbackMsg():
+    def __init__(self, result_dict):
+        self.result_dict = result_dict
+        self.range = False
+        self.elbowf = False
+        self.wide = False
+    def get_feedback_msg(self):
+        msg = []
+        tys = ["elbow", "arm", "shoulder"]
+        if "elbow" in self.result_dict:  
+            self.range = self.result_dict["elbow"]
+        if "arm" in self.result_dict:
+            self.elbowf = self.result_dict["arm"]
+        if "shoulder" in self.result_dict: 
+            self.wide = self.result_dict["shoulder"]
+        
+        # first element of msg is True when the posture was bad, otherwise False
+        if self.range or self.elbowf:
+            msg.append(True)
+        else:
+            msg.append(False)
+
+        if self.range:
+            msg.append("가동범위가 부족합니다. 끝까지 내려가주세요!")
+        
+        if self.elbowf:
+            msg.append("팔꿈치에 무리가는 자세입니다. 팔꿈치가 바깥을 향하지 않도록 해주세요!")
+
+        if self.wide:
+            msg.append("가슴 근육을 타겟으로 하는 자세입니다.")
+        else:
+            msg.append("삼두를 타겟으로 하는 자세입니다.")
+
+        return msg
+
+    
+        
 
 
 class OpenPoseWidget(QWidget):
     def __init__(self, exer, view):
         super(OpenPoseWidget, self).__init__()
         self.main_layout = QHBoxLayout()
-        self.op_layout = QHBoxLayout()
+        self.op_layout = QVBoxLayout()
         self.control_layout = QVBoxLayout()
 
         self.start_control = 0
@@ -59,37 +96,74 @@ class OpenPoseWidget(QWidget):
         self.op_layout.addWidget(op_tmp)
 
         # contorl_layout
-        sub1_layout = QHBoxLayout() 
-        sub2_layout = QVBoxLayout()
+        self.sub1_layout = QHBoxLayout() 
+        self.sub2_layout = QVBoxLayout()
 
         start = QPushButton('Start')
-        stop = QPushButton('Stop')
+        stop = QPushButton('Stop') 
+        feedback = QPushButton('Feedback')
+
+        font = QFont('Arial', 20)
+        start.setFont(font)
+        stop.setFont(font)
+        feedback.setFont(font)
+
+
+
         start.setFixedSize(QSize(150,75))
         stop.setFixedSize(QSize(150,75))
+        feedback.setFixedSize(QSize(150,75))
+        
         start.clicked.connect(partial(self.run_op_screen, exer, view))
         stop.clicked.connect(partial(self.stop_op_screen))
+        feedback.clicked.connect(partial(self.start_feedback))
         
-        sub1_layout.addWidget(start)
-        sub1_layout.addWidget(stop)
+        self.sub1_layout.addWidget(start)
+        self.sub1_layout.addWidget(stop)
+        self.sub1_layout.addWidget(feedback)
 
-        label1 = QLabel("You choose " + exer + "_" + view + " mode." )
+        msg = "" 
+        if exer == 'squat':
+            msg += "스쿼트를 선택하셨습니다.\n"
+        else:
+            msg += "푸쉬업을 선택하셨습니다.\n"
+
+        msg += "영상 촬영을 시작하기 위해서 버튼을 눌러주세요. \n" + \
+                "시작되는데 15초 가량 소요될 수 있습니다."
+
+        label1 = QLabel(msg)
         label1.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
-        label2 = QLabel("Please push Start button to run CVPosture." + \
-                        "\nIt may take a few seconds to load.")
-        label2.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
-        font = QFont('Arial', 13)
+        font = QFont('Arial', 15)
         label1.setFont(font)
-        label2.setFont(font)
 
-        sub2_layout.addWidget(label1)
-        sub2_layout.addWidget(label2)
+        self.exer_img = QLabel()
+        if exer == 'squat':
+            self.exer_img.setPixmap(QPixmap("../pictures/squat.JPG").scaledToWidth(320))
+        else:
+            self.exer_img.setPixmap(QPixmap("../pictures/pushup.JPG").scaledToWidth(320))
 
-        self.control_layout.addLayout(sub1_layout)
-        self.control_layout.addLayout(sub2_layout)
+    
+        self.exer_img.setAlignment(Qt.AlignCenter)
+
+
+        self.sub2_layout.addWidget(self.exer_img)
+        #self.sub2_layout.addWidget(label1)
+        #self.sub2_layout.addWidget(label2)
+
+
+
+        #self.control_layout.addLayout(self.sub1_layout)
+        self.control_layout.addLayout(self.sub2_layout)
+
+        
+        right_layout = QVBoxLayout()
+        right_layout.addLayout(self.op_layout)
+        right_layout.addLayout(self.sub1_layout)
 
         # main_layout
-        self.main_layout.addLayout(self.op_layout)
         self.main_layout.addLayout(self.control_layout)
+        self.main_layout.addLayout(right_layout)
+        #self.main_layout.addLayout(self.op_layout)
 
         self.setLayout(self.main_layout)
 
@@ -117,7 +191,17 @@ class OpenPoseWidget(QWidget):
         op_widget = QWidget.createWindowContainer(op_window)
         self.op_layout.addWidget(op_widget)
 
-    def stop_op_screen(self):
+        for i in reversed(range(self.sub2_layout.count())):
+            self.sub2_layout.itemAt(i).widget().setParent(None)
+        
+        ready_img = QLabel()
+        ready_img.setPixmap(QPixmap("../pictures/ready.JPG").scaledToWidth(320))
+        ready_img.setAlignment(Qt.AlignCenter)
+        self.sub2_layout.addWidget(ready_img)
+
+
+       
+    def stop_op_screen(self, msg=None):
         if self.start_control is 0:
             return
         
@@ -126,11 +210,132 @@ class OpenPoseWidget(QWidget):
         for i in reversed(range(self.op_layout.count())):
             self.op_layout.itemAt(i).widget().setParent(None)
         
-        op_tmp = QLabel('Please push Start button')
+        op_tmp = QLabel(msg if msg else 'Please push Start button')
         op_tmp.setAlignment(Qt.AlignCenter)
+        
+        """
+        if msg:
+            ox_img = QLabel()
+            ox_img.setPixmap(QPixmap("test.png"))
+            #ox_img.show()
+            self.op_layout.addWidget(ox_img)
+        """
         self.op_layout.addWidget(op_tmp)
 
 
+    def start_feedback(self): 
+        #time.sleep(5)
+        #collect data 
+        
+        
+        print("feedback start")
+        print("GET READY")
+        time.sleep(3)
+        print("START")
+
+        #for i in reversed(range(self.sub2_layout.count())):
+        #    self.sub2_layout.itemAt(i).widget().setParent(None)
+ 
+        #go_img = QLabel("GO")
+        #go_img.setPixmap(QPixmap("../pictures/go.JPG").scaledToWidth(320))
+        #go_img.setAlignment(Qt.AlignCenter)
+        #self.sub2_layout.addWidget(go_img)
+
+
+
+
+        start_point = len(os.listdir(json_dir))
+        j = JsonParser(start_point=start_point)
+   
+        # incremental try
+        frame_no_list = [i*10 for i in range(4,10)]
+        err = 0
+        
+        tys = ["elbow", "arm", "shoulder"]
+        result_dict = {} 
+        
+
+        for frame_no in frame_no_list:  
+            print(str(frame_no) + " frame test")
+            video = j.parse(None, frame_no , json_dir, "front", None)
+            result_dict = {}
+            err = 0 
+            for ty in tys:
+                print("doing " + ty)
+                fds = FeedbackSystem()
+                fds.load("demo_front_" + ty + "_model", "front")
+                result, div_zero = fds.feedback_kmeans(video, ty, threshold=0.3)
+                if div_zero:
+                    err = 1
+                else:
+                    result_dict[ty] = result 
+
+            if err is 0:
+                break
+            
+        if err is 1:
+            self.stop_op_screen("Posture is not detected. Please adjust webcam position") 
+            return
+         
+        fdm = FeedbackMsg(result_dict)
+        msg = fdm.get_feedback_msg()
+        #self.op_handler.terminate()
+
+
+        # now print out feedback msg
+        #self.stop_op_screen("Result")
+              
+        need_cor = msg[0]
+        cor_msg = msg[1:]
+
+        #top_layout = QVBoxLayout() 
+        #bottom_layout = QVBoxLayout()
+
+        """ 
+        for m in cor_msg:  
+            op_tmp = QLabel(m)
+            op_tmp.setAlignment(Qt.AlignCenter)
+            self.op_layout.addWidget(op_tmp)
+        """
+        
+        for i in reversed(range(self.sub2_layout.count())):
+            self.sub2_layout.itemAt(i).widget().setParent(None)
+       
+        if need_cor:
+            bad_img = QLabel()
+            bad_img.setPixmap(QPixmap("../pictures/bad.JPG").scaledToWidth(260))
+            bad_img.setAlignment(Qt.AlignCenter)
+            self.sub2_layout.addWidget(bad_img)
+        else:
+            nice_img = QLabel()
+            nice_img.setPixmap(QPixmap("../pictures/nice.JPG").scaledToWidth(260))
+            nice_img.setAlignment(Qt.AlignCenter)
+            self.sub2_layout.addWidget(nice_img)
+
+        feedback_msg = ""
+        for m in cor_msg:  
+            feedback_msg += m + "\n"
+
+        op_tmp = QLabel(feedback_msg)
+        op_tmp.setAlignment(Qt.AlignCenter)
+        op_tmp.setSizePolicy(QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed))
+        self.sub2_layout.addWidget(op_tmp)
+
+        """
+        ox_img = QLabel()
+        ox_img.setPixmap(QPixmap("test.png"))
+        ox_img.show()
+        top_layout.addWidget(ox_img)
+
+        for m in cor_msg:  
+            op_tmp = QLabel(m)
+            op_tmp.setAlignment(Qt.AlignCenter)
+            bottom_layout.addWidget(op_tmp)
+
+
+        self.op_layout.addLayout(top_layout)
+        self.op_layout.addLayout(bottom_layout)
+        """
 
 
     def get_op_winid(self):
@@ -171,21 +376,31 @@ class MenuWidget(QWidget):
 
         """ title design """
         title_widget = QWidget()
-        title_layout = QVBoxLayout()
-        title = QLabel('Welcome to CVPosture')
-        title.setAlignment(Qt.AlignCenter)
-        font = QFont('Arial', 25)
-        title.setFont(font)
- 
-        expl1 = QLabel('This app will correct your posture using modern Computer Vision technique')
-        expl2 = QLabel('Please choose one option you want to be checked')
-        font = QFont('Arial', 17)
+        title_layout = QHBoxLayout()
+        img_layout = QVBoxLayout()
+        hello_img = QLabel()
+        hello_img.setPixmap(QPixmap("../pictures/hello.JPG").scaledToWidth(320))
+       
+        text_layout = QVBoxLayout()
+        name = QLabel('안녕하세요! 저는 당신의 코치 YAS입니다.')
+        font = QFont('Arial', 30)
+        name.setFont(font)
+
+        expl1 = QLabel('당신이 운동하는 모습을 보여주시면 피드백을 드릴게요.')
+        expl2 = QLabel('교정하고 싶은 운동을 선택해주세요')
+        font = QFont('Arial', 22)
         expl1.setFont(font)
         expl2.setFont(font)
 
-        title_layout.addWidget(title)
-        title_layout.addWidget(expl1)
-        title_layout.addWidget(expl2)
+        img_layout.addWidget(hello_img)
+        text_layout.addWidget(name)
+        text_layout.addWidget(expl1)
+        text_layout.addWidget(expl2)
+        
+        title_layout.addLayout(img_layout)
+        title_layout.addLayout(text_layout)
+
+
         title_widget.setLayout(title_layout)
 
         """ Stack generation"""
@@ -195,20 +410,22 @@ class MenuWidget(QWidget):
         """ Button Install """
         # define 4 types of button
         
-        types = [('pushup', 'left'), ('pushup', 'front'), ('squat', 'left'), ('squat', 'front')]
+        types = [ ('pushup', 'front'), ('squat', 'left') ]
         for i, ty in enumerate(types):
             exer = ty[0]
             view = ty[1]
             self.stack.addWidget(OpenPoseWidget(exer,view))
 
             if exer == 'pushup':
-                name = 'PUSH UP'
+                name = '푸쉬업'
             if exer == 'squat':
-                name = 'SQUAT'
+                name = '스쿼트'
             
-            bt_name = name + ' - ' + view + ' view'
-
+            bt_name = name
+            
+            font = QFont('Arial', 20)
             bt = QPushButton(bt_name)
+            bt.setFont(font)
             bt.clicked.connect(partial(self.display, i+1))
             bt.setFixedSize(QSize(200,100))
             self.buttons.append(bt)
@@ -224,7 +441,7 @@ class MenuWidget(QWidget):
         # main layout
         self.setLayout(self.main_layout)
         self.resize(DISPLAY_WIDTH, DISPLAY_HEIGHT)
-        self.setWindowTitle("CVPosture")
+        self.setWindowTitle("YAS")
         self.show()
 
     def display(self, i):

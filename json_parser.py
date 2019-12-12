@@ -68,8 +68,9 @@ class VideoInfo():
 
 
 class JsonParser():
-    def __init__(self):
+    def __init__(self, start_point=0):
         self.video = None
+        self.start_point = start_point
     def parse(self, source, limit_frame_no, directory, view, label):
         """
         Description:
@@ -84,7 +85,7 @@ class JsonParser():
 
         Returns: 
             A VideoInfo"""
-        if (limit_frame_no > 999):
+        if (limit_frame_no > 9999):
             sys.exit("JsonParser doesn't support limit_frame_no larger than 999") 
     
         video_name = None
@@ -93,7 +94,7 @@ class JsonParser():
         else:
             video_name = source
         video = VideoInfo(video_name, view, label)
-        for i in range(limit_frame_no):
+        for i in range(self.start_point, self.start_point + limit_frame_no):
             filename = None
             str_i = str(i)
             # determine filename
@@ -118,12 +119,16 @@ class JsonParser():
             # blocking until this file generated
             # timeout 10 seconds
             timeout_count = 0
+            
+            print("frame " + str(i) + " found")
+           
+            
             while not filepath.is_file():
                 time.sleep(1)
                 timeout_count = timeout_count+1
-                if timeout_count > 10:
+                if timeout_count > 5:
                     error_msg = "JsonParser timeout in " + str(filepath)
-                    sys.exit(error_msg)
+                    sys.exit(error_msg) 
             
             # open the file and gather information
             f = open(filepath, "r")

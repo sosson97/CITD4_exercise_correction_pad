@@ -52,11 +52,12 @@ class FeedbackSystem():
                 continue
             
             # threshold
+            min_bottom = 0
             min_threshold = 360
             max_threshold = 0
             if view == "front" and ty == "elbow":
-                min_threshold = 80
-                max_threshold = 130
+                min_threshold = 120
+                max_threshold = 120
             elif view == "front" and ty == "shoulder":
                 min_threshold = 120
                 max_threshold = 120 
@@ -97,7 +98,8 @@ class FeedbackSystem():
                 (cur_angle <= mat[i+2][1] or mat[i+2][1] == 0) and \
                 (cur_angle <= mat[i+3][1] or mat[i+3][1] == 0) and \
                 (cur_angle <= mat[i+4][1] or mat[i+4][1] == 0) and \
-                cur_angle <= min_threshold 
+                cur_angle <= min_threshold and \
+                cur_angle >= min_bottom
 
             if is_local_minima:
                 is_dup = 0
@@ -106,6 +108,7 @@ class FeedbackSystem():
                         is_dup = 1
                 if not is_dup:
                     mins.append(cur_angle)
+                    print(str(i) + "th frame has local minima")
 
             if view == "squat":
                 is_local_maxima = (cur_angle >= mat[i-1][1]) and \
@@ -142,10 +145,18 @@ class FeedbackSystem():
                 break
         print(mins)
         print(maxs)
+        if (len(maxs) is 0):
+            maxs.append(180)
+
         if (len(mins) is 0) or (len(maxs) is 0):
             self.div_zero = 1
             return 0
         return [sum(mins)/len(mins), sum(maxs)/len(maxs)]
+
+    def manual_learn(self, min_max, label):
+       self.front_data.append((min_max, label)) 
+
+
 
     def learn(self, video, ty, threshold=0.8):
         vp = VideoProcessor(video)
@@ -190,7 +201,9 @@ class FeedbackSystem():
             min_max = self.min_max(angle_result, "front", ty)
             
             if (self.div_zero is 1):
-                    sys.exit("training data is erronous, div-zero happend")
+                    #sys.exit("training data is erronous, div-zero happend")
+                    print("div-zero happend")
+                    return [], self.div_zero
 
             training_data = [t[0] for t in self.front_data] 
             
@@ -220,4 +233,4 @@ class FeedbackSystem():
                         negative_labels_num = negative_labels_num + 1
             result = positive_labels_num > negative_labels_num
 
-            return result
+            return result, self.div_zero
